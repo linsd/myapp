@@ -7,8 +7,8 @@ package com.tasxxz.myapp.enums;
  */
 public enum DataBaseType {
     
-    MYSQL("com.mysql.jdbc.Driver","jdbc:mysql://127.0.0.1:3306/test?characterEncoding=utf8","root","linsd"),
-    ORACLE("oracle.jdbc.driver.OracleDriver","jdbc:oracle:thin:@127.0.0.1:1521:orcl","yqoa","yqoa"),
+    MYSQL("com.mysql.jdbc.Driver","jdbc:mysql://127.0.0.1:3306/test?characterEncoding=utf8","root","root"),
+    ORACLE("oracle.jdbc.driver.OracleDriver","jdbc:oracle:thin:@127.0.0.1:1521:orcl","test","123456"),
     
 ;
     
