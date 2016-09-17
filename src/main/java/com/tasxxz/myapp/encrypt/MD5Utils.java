@@ -1,4 +1,4 @@
-package com.tasxxz.myapp.util;
+package com.tasxxz.myapp.encrypt;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

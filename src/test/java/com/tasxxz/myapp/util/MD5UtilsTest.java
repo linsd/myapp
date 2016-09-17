@@ -1,5 +1,6 @@
 package com.tasxxz.myapp.util;
 
+import com.tasxxz.myapp.encrypt.MD5Utils;
 import org.junit.Assert;
 import org.junit.Test;
 
