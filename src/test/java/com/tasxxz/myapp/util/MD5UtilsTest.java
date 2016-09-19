@@ -16,7 +16,7 @@ public class MD5UtilsTest {
 
 	@Test
 	public void testByteToHex() {
-		byte[] bytes = MD5Utils.digest("12");
+		byte[] bytes = MD5Utils.digest("12w");
 		Assert.assertTrue(MD5Utils.byteArrayToHexString(bytes).equals(MD5Utils.byteArrayToHexString2(bytes)));
 	}
 }
