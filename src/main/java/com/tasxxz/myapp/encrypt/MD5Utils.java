@@ -3,6 +3,9 @@ package com.tasxxz.myapp.encrypt;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Created by linshudeng on 2016/9/17.
+ */
 public class MD5Utils {
 
     private final static String[] hexDigits = {
@@ -53,11 +56,35 @@ public class MD5Utils {
     }
 
     /**
+     * 以字节数组形式返回MD5计算结果
+     * @param input
+     * @return
+     */
+    public static byte[] digest(byte[] input) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md.digest(input);
+    }
+
+    /**
      * 以字符串(16进制)形式返回MD5计算结果
      * @param input
      * @return
      */
     public static String encode(String input) {
+        return byteArrayToHexString(digest(input));
+    }
+
+    /**
+     * 以字符串(16进制)形式返回MD5计算结果
+     * @param input
+     * @return
+     */
+    public static String encode(byte[] input) {
         return byteArrayToHexString(digest(input));
     }
 
