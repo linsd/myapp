@@ -90,7 +90,7 @@ public class InitDistrict {
 		keys = set.toArray(keys);
 		Arrays.sort(keys);
 		for (String k : keys) {
-			Map<String,String> map = new HashMap<>();
+			Map<String,String> map = new HashMap<String,String>();
 			map.put("code", k);
 			map.put("name", sub.getString(k));
 			map.put("parentCode", "1".equals(key)?null:key);
