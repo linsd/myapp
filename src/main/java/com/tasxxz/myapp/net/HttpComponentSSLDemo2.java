@@ -4,9 +4,12 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -16,6 +19,7 @@ import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -27,7 +31,7 @@ import java.util.*;
 /**
  * Created by pc on 2016/5/5.
  */
-public class HttpClientDemo {
+public class HttpComponentSSLDemo2 {
 
 
     private String DEFAULT_CHARSET = "UTF-8";
@@ -47,28 +51,8 @@ public class HttpClientDemo {
     //HTTP请求器
     private CloseableHttpClient httpClient;
 
-//    private LogInteceptor logInteceptor;
-
-    public HttpClientDemo() {
+    public HttpComponentSSLDemo2() {
         super();
-//        String interceptorName = this.getInterceptorClassName();
-//        if(interceptorName == null || "".equals(interceptorName)){
-//            throw new IllegalArgumentException("InterceptorClassName: [" + interceptorName + "] is undefined!");
-//        }
-//        try {
-//            Class<?> logInteceptorClass = Class.forName(interceptorName);
-//            if(LogInteceptor.class.isAssignableFrom(logInteceptorClass)){
-//                LogInteceptor logInteceptor = (LogInteceptor) logInteceptorClass.newInstance();
-//                this.setLogInteceptor(logInteceptor);
-//            }
-//            LOGGER.info("LogInterceptorClassName: [" + interceptorName + "] init success!");
-//        } catch (ClassNotFoundException e) {
-//            throw new IllegalArgumentException("Cannot find InterceptorClassName [" + interceptorName + "]", e);
-//        } catch (InstantiationException e) {
-//            throw new IllegalArgumentException("[" + interceptorName + "] InstantiationException error", e);
-//        } catch (IllegalAccessException e) {
-//            throw new IllegalArgumentException("[" + interceptorName + "] IllegalAccessException error", e);
-//        }
     }
 
     private void init() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
@@ -79,8 +63,8 @@ public class HttpClientDemo {
             }
         }).build();
 
-        httpClient = HttpClientBuilder.create().setSslcontext(sslContext)
-                .setSSLHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER)
+        httpClient = HttpClientBuilder.create().setSSLContext(sslContext)
+                .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
                 .setDefaultRequestConfig(requestConfig).build();
 
         //根据默认超时限制初始化requestConfig
@@ -88,7 +72,7 @@ public class HttpClientDemo {
         hasInit = true;
     }
 
-    public String request(String apiUrl, Map<String, String> param) {
+    public String request(String url, Map<String, String> param) {
 
         String result = null;
         HttpPost httpPost = null;
@@ -98,7 +82,7 @@ public class HttpClientDemo {
             if (!hasInit) {
                 init();
             }
-            httpPost = new HttpPost(apiUrl);
+            httpPost = new HttpPost(url);
             //设置请求器的配置
             httpPost.setConfig(requestConfig);
             HttpEntity entity = this.wrapParams(httpPost,param);
@@ -110,19 +94,20 @@ public class HttpClientDemo {
             responseEntity = response.getEntity();
             result = EntityUtils.toString(responseEntity, getCharset());
             if (statusCode == HttpStatus.SC_OK) {
-
+                System.out.println(result);
             } else {
-
+                System.out.println(response.getStatusLine());
             }
-//        } catch (ConnectionPoolTimeoutException e) {
-//        	e.printStackTrace();
-//        	
-//        } catch (ConnectTimeoutException e) {
-//        	e.printStackTrace();
-//        } catch (SocketTimeoutException e) {
-//        	e.printStackTrace();
-        } catch (Exception e) {
-        	e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
         } finally {
             if (null != httpPost) {
                 httpPost.abort();
@@ -175,8 +160,6 @@ public class HttpClientDemo {
      * @return
      */
     public HttpEntity wrapParams(HttpPost httpPost,Map<String,String> params) {
-        //将对象转换成参数
-//            LOGGER.info("Request url:" + apiUrl + ", params:" + JSON.toJSONString(params));
         //封装提交参数
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         Iterator<Map.Entry<String, String>> iter = params.entrySet().iterator();
@@ -192,16 +175,6 @@ public class HttpClientDemo {
         return entity;
     }
 
-//    public void setLogInteceptor(LogInteceptor logInteceptor) {
-//        this.logInteceptor = logInteceptor;
-//    }
-
-//    /**
-//     * 获取日志拦截器的名称
-//     * @return
-//     */
-//    public abstract String getInterceptorClassName();
-
     /**
      * 默认的编码
      * @return
@@ -211,9 +184,10 @@ public class HttpClientDemo {
     }
     
     public static void main(String[] args) {
-    	String apiUrl = "http://jingyan.baidu.com/article/e52e3615a2b18f40c60c51d1.html";
+    	String url = "http://jingyan.baidu.com/article/e52e3615a2b18f40c60c51d1.html";
     	Map<String, String> param = new HashMap<String, String>();
-		String rel = new HttpClientDemo().request(apiUrl, param);
+		String rel = new HttpComponentSSLDemo2().request(url, param);
 		System.out.println(rel);
+
 	}
 }
